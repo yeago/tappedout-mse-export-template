@@ -33,7 +33,7 @@ option field:
 	
 script:
 	kill_spaces := 
-		replace@(match:" ", replace:"")	
+		filter_text(inputstring, match: [:alnum:])
 		
 	MSEcard := {"  card>\n"
 			+"    name>"+to_text(card.name)+"/name>\n"
@@ -50,7 +50,7 @@ script:
 			+"      toughness>"+to_text(card.toughness)+"/toughness>\n"
 			+"    /stats>\n"
 			+"    illustrator>"+to_text(card.illustrator)+"/illustrator>\n"
-			+"    imagepath>"+to_text(kill_spaces(card.name))+".jpg/imagepath>\n"
+			+"    imagepath>"+to_text(kill_spaces(inputstring: card.name))+".jpg/imagepath>\n"
 			+"    number>"+to_text(card.card_number)+"/number>\n"
 			+"  /card>\n"
 		}
@@ -58,5 +58,5 @@ script:
 		MSEcard()
 	}
 	write_cards := "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<spoiler set=\"" + to_text(set.title) + "\">\n" + to_text( for each card in sort_list( cards, order_by: {input.card_number} ) do write_card() ) + "</spoiler>\n"
-	write_images := for each card in sort_list(cards, order_by: {card.card_number}) do write_image_file(card, directory: "cardimages", file:"{kill_spaces(card.name)}.jpg")
+	write_images := for each card in sort_list(cards, order_by: {card.card_number}) do write_image_file(card, directory: "cardimages", file:"{kill_spaces(inputstring: card.name)}.jpg")
 	to_string(write_cards)
